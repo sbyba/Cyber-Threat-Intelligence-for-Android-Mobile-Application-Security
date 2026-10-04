@@ -1,0 +1,123 @@
+# 4. The Cyber Kill Chain – Android Malware Attack
+
+## 4.1. Case Study: FluBot Android Malware
+
+FluBot is a real-world Android banking malware that was first observed in Spain in late 2020. It primarily spread through European countries using SMS phishing messages. The malware was designed to steal sensitive information, including banking credentials and other user data, and could also use infected devices to send phishing messages to other contacts.
+
+The Cyber Kill Chain developed by Lockheed Martin consists of seven stages: Reconnaissance, Weaponization, Delivery, Exploitation, Installation, Command and Control, and Actions on Objectives. The model helps analysts understand the sequence of actions required for a successful cyberattack. ([Lockheed Martin][2])
+
+MITRE ATT&CK can then be used to map specific attacker techniques to the different stages of the attack.
+
+## 4.2. Attack Analysis Using the Cyber Kill Chain
+
+| Cyber Kill Chain Stage | FluBot Attack Activity | MITRE ATT&CK Technique |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Reconnaissance | Attackers prepare campaigns targeting potential Android users and collect information that can support social engineering. | No specific FluBot technique documented |
+| 2. Weaponization | A malicious Android application and supporting infrastructure are prepared for the campaign. | No specific FluBot technique documented |
+| 3. Delivery | Victims receive SMS messages containing malicious links that lead to FluBot distribution. | T1660 – Phishing |
+| 4. Exploitation | The victim interacts with the malicious content and is persuaded to install the Android application. | No specific FluBot technique documented |
+| 5. Installation | After installation, FluBot abuses Android Accessibility Services to steal credentials, evade removal and perform malicious actions. | T1453 – Abuse Accessibility Features 
+| 6. Command and Control | FluBot communicates with attacker-controlled infrastructure using HTTP POST requests and can use Domain Generation Algorithms to locate C2 servers. | T1437.001 – Application Layer Protocol: Web Protocols; T1637.001 – Dynamic Resolution: Domain Generation Algorithms |
+| 7. Actions on Objectives | FluBot steals credentials and banking information, intercepts SMS messages, captures information from banking applications and sends phishing SMS messages to other contacts. | T1409 – Stored Application Data; T1636.004 – Protected User Data: SMS Messages; T1417.002 – Input Capture: GUI Input Capture; T1582 – SMS Control |
+
+The MITRE ATT&CK database directly associates FluBot with these techniques. In particular, MITRE documents its use of SMS phishing, Accessibility Services, HTTP-based C2 communication, Domain Generation Algorithms, SMS interception, GUI input capture, stored application data collection and SMS-based propagation. ([attack.mitre.org][1])
+
+## 4.3. Detailed Attack Flow
+
+The FluBot attack can be represented as the following sequence:
+
+Target Selection → SMS Phishing → Malicious Link → APK Installation → Accessibility Services → Data Collection → C2 Communication → Data Theft and Further Propagation
+
+### 1. Reconnaissance
+
+During the reconnaissance stage, attackers prepare the campaign and identify potential victims. Information about users and trusted organizations can be used to make phishing messages appear legitimate.
+
+No specific reconnaissance technique is currently documented by MITRE ATT&CK as a FluBot technique. Therefore, this stage is described as part of the general attack lifecycle rather than being assigned an unsupported ATT&CK ID.
+
+### 2. Weaponization
+
+During weaponization, attackers prepare the malicious Android application and the infrastructure required to distribute and control it.
+
+FluBot itself is classified by MITRE as Android malware. However, MITRE does not currently assign a specific weaponization technique to FluBot. Therefore, no additional ATT&CK technique is assigned to this stage. ([attack.mitre.org][1])
+
+### 3. Delivery
+
+FluBot was primarily delivered through SMS phishing (smishing). Victims received messages containing malicious links that directed them to websites used to distribute the malware.
+
+This activity corresponds to T1660 – Phishing. MITRE specifically states that FluBot was distributed through malicious links contained in SMS messages. ([attack.mitre.org][3])
+
+### 4. Exploitation
+
+The attack depends on user interaction. The victim follows the malicious link and is persuaded to install the application.
+
+In this case study, no additional ATT&CK technique is assigned to this stage because the MITRE FluBot entry does not explicitly map a separate exploitation technique to this behavior.
+
+### 5. Installation
+
+After the malicious application is installed, FluBot can abuse Android Accessibility Services.
+
+This corresponds to T1453 – Abuse Accessibility Features. According to MITRE, FluBot uses Accessibility Services to steal application credentials, evade detection and removal, and send SMS messages for lateral movement. ([attack.mitre.org][4])
+
+### 6. Command and Control
+
+FluBot communicates with attacker-controlled infrastructure after infecting the Android device.
+
+MITRE identifies T1437.001 – Application Layer Protocol: Web Protocols, because FluBot can use HTTP POST requests on port 80 to communicate with its C2 server. It also uses T1637.001 – Dynamic Resolution: Domain Generation Algorithms to connect to C2 infrastructure. ([attack.mitre.org][5])
+
+These techniques make it more difficult for defenders to block or identify the malware's command-and-control infrastructure.
+
+### 7. Actions on Objectives
+
+The final stage involves achieving the attacker's objectives.
+FluBot can collect credentials, banking information and other information stored on the victim's device. This behavior corresponds to T1409 – Stored Application Data.
+
+The malware can also intercept SMS and USSD messages, corresponding to T1636.004 – Protected User Data: SMS Messages. It can use overlays on banking applications to capture credit card information, corresponding to T1417.002 – Input Capture: GUI Input Capture.
+
+Finally, FluBot can send SMS phishing messages to other contacts from an infected device. This corresponds to T1582 – SMS Control. ([attack.mitre.org][1])
+
+## 4.4. Cyber Kill Chain and MITRE ATT&CK Mapping
+
+The FluBot case demonstrates how the Cyber Kill Chain and MITRE ATT&CK can be used together for cyber threat analysis.
+
+The Cyber Kill Chain provides a chronological representation of the attack, showing how an attacker progresses from initial targeting to achieving the final objective. Lockheed Martin defines the model as a seven-stage framework for understanding adversary actions. ([Lockheed Martin][2])
+
+MITRE ATT&CK, in contrast, provides a more detailed description of the techniques used by attackers. For example, the FluBot delivery stage can be associated with T1660 – Phishing, while its use of Accessibility Services corresponds to T1453. Its C2 activity can be mapped to T1437.001 and T1637.001. ([attack.mitre.org][1])
+
+The combination of both frameworks provides a more complete picture of the attack:
+
+Cyber Kill Chain = when and where the attack occurs
+
+MITRE ATT&CK = how the attacker performs specific activities
+
+## 4.5. CTI Indicators
+
+The FluBot case also demonstrates what information can be collected during a Cyber Threat Intelligence investigation. Potential indicators include:
+
+* malicious APK files and their hashes;
+* phishing URLs;
+* malicious domains;
+* C2 domains and IP addresses;
+* suspicious SMS messages;
+* Android package names;
+* application certificates;
+* suspicious application permissions;
+* Accessibility Service activity;
+* unusual HTTP connections;
+* SMS activity generated by an infected device;
+* banking application overlays.
+
+These indicators can be collected from open sources, normalized and enriched with additional information. They can then be correlated and stored in MISP for further analysis and threat intelligence sharing.
+
+This demonstrates how a real-world Android malware campaign can be transformed into structured Cyber Threat Intelligence data. The resulting intelligence can help security analysts identify malicious applications, detect communication with known C2 infrastructure and recognize similar attack patterns in future incidents.
+
+### 4.6. Conclusion
+
+The FluBot case demonstrates that Android applications and users can be targeted through a combination of social engineering, malicious applications, abuse of Android functionality and command-and-control infrastructure.
+
+Using the Cyber Kill Chain makes it possible to understand the attack as a sequence of stages, while MITRE ATT&CK provides detailed techniques for the documented activities of the malware. The resulting indicators can then be collected, enriched and correlated as part of a CTI workflow and stored in MISP for further investigation.
+
+[1]: https://attack.mitre.org/software/S1067/?utm_source=chatgpt.com "FluBot, Software S1067 | MITRE ATT&CK®"
+[2]: https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html?utm_source=chatgpt.com "Cyber Kill Chain® | Lockheed Martin"
+[3]: https://attack.mitre.org/techniques/T1660/?utm_source=chatgpt.com "Phishing, Technique T1660 - Mobile | MITRE ATT&CK®"
+[4]: https://attack.mitre.org/techniques/T1453/?utm_source=chatgpt.com "Abuse Accessibility Features, Technique T1453 - Mobile | MITRE ATT&CK®"
+[5]: https://attack.mitre.org/techniques/T1437/001/?utm_source=chatgpt.com "Application Layer Protocol: Web Protocols, Sub-technique T1437.001 - Mobile | MITRE ATT&CK®"
